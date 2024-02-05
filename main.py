@@ -359,7 +359,7 @@ def create(iso_object):
     description = "\n".join(["Explore the ISO 9354:1989 specification for basic weave structures.",
                             "The pattern has four sections and defines basic Plain, Twill, and Satin weave structures.",
                             "- Not all variations of these structures are able to be defined by the ISO definition.",
-                            "(Source code is located at https://github.com/Neon22/iso-weaves-explorer"])
+                            "(Source code is located at https://github.com/Neon22/iso-weaves-explorer)"])
     report = ltk.VBox(
                 ltk.Text("Info:"),
                 ltk.TextArea("This is a text area.",
