@@ -404,9 +404,6 @@ def create(iso_object):
         ltk.Button("WIF", ltk.proxy(lambda event: save_wif_file(event, iso_object))).addClass("copybtn")
     ).addClass("label_box")
 
-    #def animate(event):
-    #    UI_controls.animate({ "left": 0, "top": 0 }, 500)
-
     return (
         ltk.VBox(
             ltk.Heading2("ISO weave - Structure Explorer:"),
@@ -425,13 +422,6 @@ def create(iso_object):
                     ),
                 UI_controls.width(100).draggable()
             ),
-            #ltk.HBox(
-            #    report
-            #)
-            #ltk.Text("For clarity, we marked the custom widget orange.")
-            #    .css("margin-top", 20),
-            #ltk.Heading4("Tip: drag the card and then press the button below"),
-            #ltk.Button("Reset", animate).width(90)
         )
         .attr("id", "isoweaves")
     )

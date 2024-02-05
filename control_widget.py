@@ -143,10 +143,13 @@ class ISO_control_widget(ltk.VBox):
                 xstart = box_dim * int(self.iso_object.thrd_widget.values[0]) * (slot+1)
                 width = box_dim * int(self.iso_object.thrd_widget.values[0])
                 #ymax = box_dim * int(self.iso_object.repeats) * self.iso_object.total_shafts
+                #ystart = ymax - box_dim * sum([int(val) for val in self.iso_object.frth_widget.values[:slot+1]])
+                # get roll around for this visible offset
                 ymax = box_dim * int(self.iso_object.repeats) * self.iso_object.total_shafts  - box_dim * sum([int(val) for val in self.iso_object.frth_widget.values[:slot]])
                 ystart = ymax - box_dim * int(self.iso_object.frth_widget.values[slot])
-                #ystart = ymax - box_dim * sum([int(val) for val in self.iso_object.frth_widget.values[:slot+1]])
-                #print(int(self.iso_object.repeats) * self.iso_object.total_shafts - sum([int(val) for val in self.iso_object.frth_widget.values[:slot]]))
+                while int(ystart/box_dim) < self.iso_object.total_shafts:
+                    ystart += self.iso_object.total_shafts * box_dim
+                    ymax += self.iso_object.total_shafts * box_dim
             boxdim = [xstart, ystart, width, ymax-ystart]
         #
         newsvg = make_svg_overlay(self.iso_object.dimensions, boxdim)
