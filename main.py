@@ -9,17 +9,13 @@ from js import Uint8Array, File, URL
 # Todo:
 # - add save to svg, wif?
 #    - https://pyscript.recipes/2024.1.1/basic/file-download/
-# - allow multiple thrds for Twills
 # - add library
-# - bug: 30-05 01-01-03 04 04 03 02 02  (6 in frth. last one is to get back to start)
-# - bug: 20-03 01-01-03 03 03 01 01
-# if we add force tiling button on frth - add bits on end so tiles
-# if we add for sq button on frth
 
 
+# For debugging purposes
 #ltk.window.document.currentScript.terminal.resize(60, 12)
-def print(*args):
-    ltk.find("body").append(" ".join(str(a) for a in args), "<br>")
+#def print(*args):
+#    ltk.find("body").append(" ".join(str(a) for a in args), "<br>")
 
 
 class MyISO_control_widget(ISO_control_widget):
@@ -46,10 +42,10 @@ class ISO_widget(object):
         self.scnd_widget = MyISO_control_widget(self, 2, initial_values[1])
         self.thrd_widget = MyISO_control_widget(self, 3, initial_values[2])
         self.frth_widget = MyISO_control_widget(self, 4, initial_values[3])
-        # disable frth because plainweave initialisation
+        # disable frth as plainweave initialisation
         self.frth_widget.disable_buttons(True)
-        # make scnd similar looking to total
-        self.scnd_widget.addClass("shaft_lock_box")  # look same as shaft count
+        # make scnd similar visually to total_shafts
+        self.scnd_widget.addClass("shaft_lock_box")
         #
         self.total_shafts = 2
         self.lock_shafts = False
@@ -65,9 +61,9 @@ class ISO_widget(object):
         self.label = "10-01 01-01-00"
         self.dimensions = dimensions  # SVG dimensions
         self.repeats = 2#.2  # repeats to show in SVG
-        self.box_min = 20  # min box sizein SVG
+        self.box_min = 20  # min box size in SVG
         self.box_dim = 10  # will be calculated to fit self.dimensions. Use for highlighting
-        self.colors = ['red','grey']
+        self.colors = ['red','grey']  # default colors can be overwritten to black/black
 
     def get_control(self, idx):
         """
@@ -121,7 +117,6 @@ class ISO_widget(object):
             # is it even possible
             if len(self.scnd_widget.values) == self.total_shafts:
                 # its all 1's. no change possible
-                #print("!one back")
                 newvalue = 1
             else:  # change is possible
                 # increase or decrease
@@ -133,7 +128,6 @@ class ISO_widget(object):
                     newvalue = 1
                     #print("!new/old=0", newvalue,oldvalue)
                 elif count > 0:
-                    #possibles = list(range(len(self.scnd)))
                     possibles = list(range(len(self.scnd_widget.values)))
                     possibles.remove(slot)  # the possible slots to adjust
                     #print("-add to slots",count,possibles)
@@ -162,14 +156,14 @@ class ISO_widget(object):
 
     def disable_part(self, iso_part=4, rand=False):
         """
-        Disable the control inc/dec/random? buttons.
+        Disable the control inc/dec and random? buttons.
         """
         control = self.get_control(iso_part)
         control.disable_buttons(rand)
 
     def enable_part(self, iso_part=4, rand=False):
         """
-        Enable the control inc/dec/random buttons.
+        Enable the control inc/dec and random buttons.
         """
         control = self.get_control(iso_part)
         control.enable_buttons(rand)
@@ -342,7 +336,6 @@ def save_wif_file(event, iso_object):
     js_array = Uint8Array.new(len(encoded_data))
     js_array.assign(my_stream.getbuffer())
     # File constructor takes a buffer, name, MIME type. (name not used)
-    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
     file = File.new([js_array], "foo.txt", {type: "text/plain"})
     url = URL.createObjectURL(file)
     hidden_link = ltk.window.document.createElement("a")
@@ -354,10 +347,8 @@ def save_wif_file(event, iso_object):
 def copy_iso_text(event):
     """
     select the iso text input and copy
-    - for user to paste elesewhere
+    - for user to paste elsewhere
     """
-    #event.target.focus()
-    #event.target.select()  # nope
     ltk.jQuery("#isolabel").select()
     ltk.window.document.execCommand("copy")
 
@@ -368,10 +359,10 @@ def create(iso_object):
     description = "\n".join(["Explore the ISO 9354:1989 specification for basic weave structures.",
                             "The pattern has four sections and defines basic Plain, Twill, and Satin weave structures.",
                             "- Not all variations of these structures are able to be defined by the ISO definition.",
-                            "Note that at this time, this generator may not be completely accurate and should not be relied upon."])
+                            "(Source code is located at https://github.com/Neon22/iso-weaves-explorer"])
     report = ltk.VBox(
                 ltk.Text("Info:"),
-                ltk.TextArea("This is a text area.\n\nChange me!",
+                ltk.TextArea("This is a text area.",
                              {"height": 80 }).attr("id", "report_area")
             )
     UI_controls =  ltk.VBox(

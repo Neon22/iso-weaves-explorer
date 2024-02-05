@@ -2,8 +2,9 @@ import ltk
 from random import randrange
 import svg as SVG
 
-#def print(*args):
-#    ltk.find("body").append(" ".join(str(a) for a in args), "<br>")
+# For debugging
+def print(*args):
+    ltk.find("body").append(" ".join(str(a) for a in args), "<br>")
 
 # Todo:
 # - 
@@ -141,8 +142,11 @@ class ISO_control_widget(ltk.VBox):
             else:  # several frth values
                 xstart = box_dim * int(self.iso_object.thrd_widget.values[0]) * (slot+1)
                 width = box_dim * int(self.iso_object.thrd_widget.values[0])
-                ymax = box_dim * int(self.iso_object.repeats) * self.iso_object.total_shafts
+                #ymax = box_dim * int(self.iso_object.repeats) * self.iso_object.total_shafts
+                ymax = box_dim * int(self.iso_object.repeats) * self.iso_object.total_shafts  - box_dim * sum([int(val) for val in self.iso_object.frth_widget.values[:slot]])
                 ystart = ymax - box_dim * int(self.iso_object.frth_widget.values[slot])
+                #ystart = ymax - box_dim * sum([int(val) for val in self.iso_object.frth_widget.values[:slot+1]])
+                #print(int(self.iso_object.repeats) * self.iso_object.total_shafts - sum([int(val) for val in self.iso_object.frth_widget.values[:slot]]))
             boxdim = [xstart, ystart, width, ymax-ystart]
         #
         newsvg = make_svg_overlay(self.iso_object.dimensions, boxdim)
@@ -188,10 +192,8 @@ class ISO_control_widget(ltk.VBox):
         count = 1
         # adjust iso_object
         if iso_part == 2:  # scnd - has to be in multiples of 2
-        #if iso_part == 2 or (iso_part == 3 and self.iso_object.frst_widget.values[0][0]=="1" and len(self.values)%2==0):  # scnd - has to be in multiples of 2
             count = 2
         # Adjust UI
-        #child_count = len(group.children())
         child_count = len(self.values)
         for i in range(count):
             new_id = p_id + "_" + str(child_count + i)
@@ -329,9 +331,8 @@ class ISO_control_widget(ltk.VBox):
           - if satin - single entry - usually 01 (modulo)
         - frth:
           - if plain - always 00
-          - if twill - single value modulo scnd_size
-          - if satin - any number of numbers modulo scnd_size
-                     - if 1 number then repeat until sq
+          - if satin/twill - any number of numbers modulo scnd_size
+                           - if 1 number then repeat until sq
         """
         iso_part = int(self.id[-1])  # slot 1 through 4
         element = ltk.jQuery(event.target)
@@ -412,8 +413,7 @@ class ISO_control_widget(ltk.VBox):
         State has been recorded.
         Restore whole state for twill/satin if disable=False 20,21, and 30,31
         - for Plain: disable frth, set to 0 else 1
-        - for Twill: single thrd,frth
-        - for Satin: single thrd
+        - for Twill,Satin: single thrd
         (Should only be called if oldvalue != newvalue)
         """
         #print("mode was,is:",oldvalue, newvalue)
@@ -437,7 +437,6 @@ class ISO_control_widget(ltk.VBox):
                 self.iso_object.frth_widget.set_values(["01"])
             self.iso_object.disable_part(3, False)
             self.iso_object.enable_part(4, True)
-            self.iso_object.disable_part(4, False)
         else:  # satin
             self.iso_object.enable_part(4, True)
             # get satin state
@@ -460,9 +459,9 @@ class ISO_control_widget(ltk.VBox):
         print("...Replace with your function in subclass.")
 
 # Todo:
-# - state working
+# - 
 
-# Ref:
+# Ref jquery:
 # parent = ltk.jQuery(event.target).parent().parent() # self
 # p_id = parent.attr("id")
 # group = parent.find(".inputs")

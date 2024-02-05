@@ -342,13 +342,14 @@ class ISO_pattern(object):
             basic_width = self.thrd[0] * self.height
             if len(self.frth) == 1:
                 return basic_width
-            else:  # several frth values
+            else:  # several frth values  #!twill expansion
                 min_rpt_width = 1
                 # manually find LCM !!works but sheesh
-                while min_rpt_width < basic_width * self.frth[0]:
-                    if (min_rpt_width * self.frth[0]) % basic_width == 0:
-                        break
-                    min_rpt_width += 1
+                #while min_rpt_width < basic_width * self.frth[0]:
+                #    if (min_rpt_width * self.frth[0]) % basic_width == 0:
+                #        break
+                #    min_rpt_width += 1
+                min_rpt_width = sum(self.thrd) * (len(self.frth) + 1)
                 return min_rpt_width
         # Satins
         else:  # frst == 30,31
@@ -427,8 +428,12 @@ class ISO_pattern(object):
                         rise += self.frth[0]
                         for i in range(rep_pos):
                             self.grid.cols[x+i] = shift(self.grid.cols[i], rise)
-                else:  # multiple frths
-                    print("Whoops - Twill - Expecting a single number in fourth slot")
+                else:  # multiple frths   #!twill expansion
+                    #print("Whoops - Twill - Expecting a single number in fourth slot")
+                    for i,x in enumerate(range(rep_pos, self.width, self.thrd[0])):
+                        rise += self.frth[i]
+                        for i in range(rep_pos):
+                            self.grid.cols[x+i] = shift(self.grid.cols[i], rise)
                         
         # Satins
         elif self.frst in [30,31]:
